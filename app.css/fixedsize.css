@@ -19,3 +19,14 @@ html{font-synthesis:none}
 
 /* 5. Media can't push the layout wider than the screen. */
 img,video,canvas,svg{max-width:100%}
+
+/* Small, even icon sizes. Icons whose drawing has a wide empty margin in its viewBox get a slightly larger box so every glyph ends up the same small visual size. */
+#profileSettingsPage .profile-ui-icon svg{width:14px!important;height:14px!important}
+#profileSettingsPage #settingsNotifications .profile-ui-icon svg{width:19px!important;height:19px!important}
+#profileSettingsPage #settingsSupport .profile-ui-icon svg{width:17px!important;height:17px!important}
+#profileSettingsPage #settingsLogout .profile-ui-icon svg{width:16px!important;height:16px!important}
+.sx-ico svg[viewBox="0 0 16 16"]{width:13px;height:13px}
+.wd-act-ic svg[viewBox="0 0 16 16"]{width:13px;height:13px}
+.nd-hero .wd-act-ic.big svg[viewBox="0 0 16 16"]{width:18px;height:18px}
+.pc-pad .pc-side svg.vx-bs{width:22px;height:22px}
+#sdKeys button svg.vx-bs{width:19px;height:19px}

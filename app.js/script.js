@@ -294,13 +294,23 @@ function renderGreeting(){
 }
 setInterval(()=>{if(!document.hidden)renderGreeting()},60000);
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+const ASSET_PAGE=5;let assetPage=0,assetLastQ="";
+function paintAssetTrack(pct){const tr=document.getElementById("assetTrack");if(!tr)return;const f=tr.firstElementChild;if(f)f.style.width=pct+"%";tr.setAttribute("aria-valuenow",String(Math.round(pct)))}
 function renderAssets(query){
-  const list=document.getElementById("assetList"),q=query.trim().toLowerCase();
+  const list=document.getElementById("assetList"),q=query.trim().toLowerCase(),more=document.getElementById("assetsViewOthers");
+  if(q!==assetLastQ){assetLastQ=q;assetPage=0}
+  if(more)more.hidden=true;paintAssetTrack(0);
   if(!dashboardAssets.length){list.innerHTML='<div class="wd-empty"><div class="wd-empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true"><path fill-rule="evenodd" d="M6 8V1h1v6.117L8.743 6.07a.5.5 0 0 1 .514 0L11 7.117V1h1v7a.5.5 0 0 1-.757.429L9 7.083 6.757 8.43A.5.5 0 0 1 6 8"/><path d="M3 0h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-1h1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v1H1V2a2 2 0 0 1 2-2"/><path d="M1 5v-.5a.5.5 0 0 1 1 0V5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0V8h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1zm0 3v-.5a.5.5 0 0 1 1 0v.5h.5a.5.5 0 0 1 0 1h-2a.5.5 0 0 1 0-1z"/></svg></div><strong>No assets yet</strong><p>Crypto you receive will show up here.</p></div>';return}
   const rows=dashboardAssets.filter(x=>!q||x.symbol.toLowerCase().includes(q)||(x.name||"").toLowerCase().includes(q));
   if(!rows.length){list.innerHTML='<div class="wd-empty"><strong>No results</strong><p>No asset matches your search.</p></div>';return}
-  list.innerHTML=rows.map(x=>{const up=(x.change||0)>=0;return `<div class="wd-row"><div class="wd-coin">${esc(x.symbol[0])}</div><div class="wd-coin-info"><b>${esc(x.symbol)}<span>/USDT</span></b><small>${fmt(x.amount,4)} ${esc(x.symbol)}</small></div><div class="wd-coin-value">${fmt(x.amount*x.price)}</div><div class="wd-pill ${up?"up":"down"}">${up?"+":"-"}${fmt(Math.abs(x.change||0))}%</div></div>`}).join("");
+  const pages=Math.ceil(rows.length/ASSET_PAGE);if(assetPage>=pages)assetPage=0;
+  const start=assetPage*ASSET_PAGE,shown=rows.slice(start,start+ASSET_PAGE);
+  list.innerHTML=shown.map(x=>{const up=(x.change||0)>=0;return `<div class="wd-row"><div class="wd-coin">${esc(x.symbol[0])}</div><div class="wd-coin-info"><b>${esc(x.symbol)}<span>/USDT</span></b><small>${balanceHidden?"••••":`${fmt(x.amount,4)} ${esc(x.symbol)}`}</small></div><div class="wd-coin-value">${balanceHidden?"••••":fmt(x.amount*x.price)}</div><div class="wd-pill ${up?"up":"down"}">${up?"+":"-"}${fmt(Math.abs(x.change||0))}%</div></div>`}).join("");
+  /* the line fills as more of the list has been viewed; completely full once the end of the list is on screen */
+  paintAssetTrack((start+shown.length)/rows.length*100);
+  if(more)more.hidden=rows.length<=ASSET_PAGE;
 }
+document.getElementById("assetsViewOthers").addEventListener("click",()=>{assetPage++;const s=document.getElementById("assetSearch");renderAssets(s?s.value:"")});
 const assetSearchInput=document.getElementById("assetSearch");
 const cryptoSearchPanel=document.getElementById("cryptoSearchPanel");
 const cryptoMarketList=document.getElementById("cryptoMarketList");
@@ -391,7 +401,7 @@ function openMarketDetail(coin){
  document.getElementById("marketDetailSymbol").textContent=coin.symbol;
  document.getElementById("marketDetailName").innerHTML="";
  document.getElementById("marketDetailName").append(document.createTextNode(coin.name+" "));
- const copy=document.createElement("button");copy.type="button";copy.id="copyMarketSymbol";copy.setAttribute("aria-label","Copy cryptocurrency symbol");copy.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H16"/></svg>';document.getElementById("marketDetailName").append(copy);
+ const copy=document.createElement("button");copy.type="button";copy.id="copyMarketSymbol";copy.setAttribute("aria-label","Copy wallet address");copy.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H16"/></svg>';document.getElementById("marketDetailName").append(copy);
  document.getElementById("marketDetailBalanceSymbol").textContent=coin.symbol;
  document.getElementById("marketAboutName").textContent=coin.name;
  document.getElementById("marketAboutCopy").hidden=true;
@@ -447,11 +457,19 @@ function drawMarketChart(points){
 document.getElementById("marketDetailBack").addEventListener("click",()=>{marketDetailPage.hidden=true;if(marketRefreshTimer){clearInterval(marketRefreshTimer);marketRefreshTimer=null}document.body.classList.remove("wd-feature-open");document.getElementById("dashboardPage").classList.add("searching-crypto");cryptoSearchPanel.hidden=false;resetCryptoPanelScroll();assetSearchInput.setAttribute("aria-expanded","true")});
 document.getElementById("marketDetailPage").addEventListener("click",e=>{const range=e.target.closest("[data-market-range]");if(range){marketChartRange=range.dataset.marketRange;document.querySelectorAll("[data-market-range]").forEach(b=>b.classList.toggle("active",b===range));loadMarketDetailData();return}const action=e.target.closest("[data-market-action]");if(action){wdToast(`${action.dataset.marketAction} will be available when your wallet is connected`);return}});
 /* watchlist heart: handled by activity.js (saved in the database, drives price alerts) */
-document.getElementById("marketDetailPage").addEventListener("click",e=>{if(e.target.closest("#copyMarketSymbol")){navigator.clipboard?.writeText(activeMarketCoin?.symbol||"").then(()=>wdToast("Symbol copied")).catch(()=>wdToast(activeMarketCoin?.symbol||""))}});
+document.getElementById("marketDetailPage").addEventListener("click",async e=>{if(!e.target.closest("#copyMarketSymbol"))return;
+  const sym=String(activeMarketCoin&&activeMarketCoin.symbol||"").toUpperCase();
+  let rec=depositAddrs[sym];
+  if(!rec){try{await loadDepositAddrs()}catch(_){}rec=depositAddrs[sym]}
+  const addr=rec&&rec.address;
+  if(!addr){wdToast(sym?`${sym} wallet address isn't available yet`:"Wallet address isn't available yet");return}
+  try{await navigator.clipboard.writeText(addr);wdToast("Wallet address copied")}
+  catch(_){const ta=document.createElement("textarea");ta.value=addr;ta.style.cssText="position:fixed;opacity:0";document.body.appendChild(ta);ta.select();let ok=false;try{ok=document.execCommand("copy")}catch(__){}ta.remove();wdToast(ok?"Wallet address copied":"Copy isn't available in this browser")}
+});
 document.getElementById("marketAboutToggle").addEventListener("click",()=>{const p=document.getElementById("marketAboutCopy");p.hidden=!p.hidden});
 document.getElementById("marketBuyButton").addEventListener("click",()=>{if(window.veltrixBuyBrowser)veltrixBuyBrowser.open(activeMarketCoin);else wdToast("Buying is not available right now")});
 window.addEventListener("resize",()=>{if(!marketDetailPage.hidden)drawMarketChart(marketChartPoints)});
-document.getElementById("toggleBalance").addEventListener("click",()=>{balanceHidden=!balanceHidden;renderBalance()});
+document.getElementById("toggleBalance").addEventListener("click",()=>{balanceHidden=!balanceHidden;renderBalance();const s=document.getElementById("assetSearch");renderAssets(s?s.value:"")});
 
 // Five-card physical-feeling stack: the front card follows the finger,
 // then flies away and joins the back of the stack on a left swipe.

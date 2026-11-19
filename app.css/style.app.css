@@ -1108,3 +1108,7 @@ html,body{overscroll-behavior-y:none}
 /* Dialog inputs (Rename device): no blue text-selection highlight over the name */
 .profile-ui-dialog-card input::selection{background:transparent;color:inherit}
 .profile-ui-dialog-card input::-moz-selection{background:transparent;color:inherit}
+
+/* Notification settings: just enough room under the last topic (was ~120px of empty space) */
+#notifPage .sx-body{padding-bottom:12px}
+#notifPage.profile-ui-page{padding-bottom:max(12px,env(safe-area-inset-bottom))}

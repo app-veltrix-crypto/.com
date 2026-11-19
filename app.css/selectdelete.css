@@ -1,0 +1,38 @@
+/* Veltrix – press-and-hold select + bottom delete bar (see app.js/selectdelete.js). Fully scoped with the vx-sel prefix. */
+.vx-selbar{display:inline-flex;align-items:center;gap:2px;flex:0 0 auto;margin-left:auto;animation:vxSelIn .18s ease-out both}
+.vx-selbar~.vxg-menubtn{margin-left:0}
+.vx-selbar[hidden],.vx-selbtn[hidden]{display:none!important}
+@keyframes vxSelIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.vx-selbtn{width:36px;height:36px;flex:0 0 36px;border:0;border-radius:50%;display:grid;place-items:center;padding:0;background:transparent;color:#111;box-shadow:none;cursor:none;-webkit-tap-highlight-color:transparent}
+.vx-selbtn svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.vx-selbtn:active{background:rgba(0,0,0,.07)}
+.vx-seldel{color:#c62828}
+/* rows while something is selected: empty ring on every row, green tick on the selected ones */
+.vx-selrow{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.vx-selrow::after{content:"";flex:none;width:20px;height:20px;border-radius:50%;border:1.5px solid #c3c9cf;box-sizing:border-box;background:transparent}
+.vx-selected::after{border-color:#25d366;background:#25d366 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m5 12.5 4.5 4.5L19 7.5'/%3E%3C/svg%3E") center/12px no-repeat}
+/* conversations + notifications: the whole row turns into a soft green rounded card */
+#vmConvs .vm-row.vx-selected{width:calc(100% - 20px);margin:3px 10px;padding-left:10px;padding-right:10px;border-radius:18px;background:rgba(37,211,102,.16);box-shadow:inset 0 0 0 1px rgba(37,211,102,.34)}
+#notificationPage .wd-act-row.vx-selected{background:rgba(37,211,102,.14);border-color:rgba(37,211,102,.38);box-shadow:0 0 0 1px rgba(37,211,102,.2)}
+#notifList.vx-selmode{padding-bottom:88px}
+/* messages: the tick sits just outside the bubble; a soft green tint marks the selected bubble. No outline / border, so the gap between bubbles never changes */
+.vm-b.vx-selrow::after{position:absolute;top:50%;margin-top:-10px}
+.vm-b.me.vx-selrow::after{left:-28px}
+.vm-b.them.vx-selrow::after{right:-28px}
+.vm-b.vx-selected{background-image:linear-gradient(rgba(37,211,102,.28),rgba(37,211,102,.28))}
+/* dark mode (top-layer pages): the bar sits above the invert layer, so give it real dark colours */
+html.vm-tl[data-theme="dark"] .vx-selbtn{background:transparent;color:#f2f2f2}
+html.vm-tl[data-theme="dark"] .vx-seldel{background:transparent;color:#ff6b6b}
+
+/* No native text selection / copy callout on press-and-hold anywhere (user dashboard + admin). Only the app's own press-and-hold select runs.
+   Typing fields stay selectable so people can still edit, paste and copy inside inputs. */
+html,body,body *{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea,[contenteditable=""],[contenteditable="true"],[contenteditable=""] *,[contenteditable="true"] *{-webkit-user-select:text!important;user-select:text!important;-webkit-touch-callout:default!important}
+
+.vx-selbtn svg.vx-fill{fill:currentColor;stroke:none}
+
+/* compact header icons to match the rest of the header */
+.vx-selbtn{width:32px;height:32px;flex-basis:32px}
+.vx-selbtn svg.vx-fill{width:14px;height:14px}
+.vx-selext{color:#4a4f57}
+html.vm-tl[data-theme="dark"] .vx-selext{color:#c9ccd2}

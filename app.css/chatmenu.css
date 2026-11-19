@@ -31,3 +31,18 @@
 .vxg-sw{flex:0 0 28px;width:28px;height:17px}
 .vxg-sw::after{width:13px;height:13px}
 .vxg-item[aria-checked="true"] .vxg-sw::after{transform:translateX(11px)}
+
+/* Messages selected: the three dots float back and forth to draw the eye; the pop-up gains Delete message / Edit message */
+.vxg-menubtn.vxg-float{animation:none}
+@keyframes vxgFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+@media (prefers-reduced-motion:reduce){.vxg-menubtn.vxg-float{animation:none}}
+.vxg-item.vxg-danger{color:#c62828}
+
+/* filled icons (delete / edit) */
+.vxg-item>svg.vx-fill{fill:currentColor;stroke:none}
+/* pop-up open: delete / edit live only in the pop-up, so the header copies hide */
+#vmChat.vxg-popopen .vx-selbar{display:none!important}
+#vmChat.vxg-popopen .vx-selbar~.vxg-menubtn{margin-left:auto}
+
+/* compact pop-up icons */
+.vxg-item>svg.vx-fill{flex:0 0 12px;width:12px;height:12px;margin:0 1.5px}

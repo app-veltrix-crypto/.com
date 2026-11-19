@@ -407,3 +407,30 @@ html[data-theme="dark"] .vx-info-card{filter:invert(1) hue-rotate(180deg)}
 .vm-badge{padding:1.5px 5px 0!important}
 /* conversation-list unread count (user side): same as the admin one - no script nudging it. admin.html does not load this file. */
 .vm-badge-n{padding:1.5px 6px 0!important}
+
+/* Notifications header: sit at the same height as the dashboard and other page headers (was ~15px too low) */
+#notificationPage.vx-hist{padding-top:calc(5px + env(safe-area-inset-top,0px))}
+#notificationPage.vx-hist .wd-notification-header{margin-top:0;padding-left:6px;padding-right:6px}
+
+/* Notifications + History (View all): the header stays fixed at the top; only the list scrolls.
+   The list fades out softly as it slides up under the header instead of being cut off by a straight line. */
+#notificationPage.vx-hist{padding-top:0;--vx-top:calc(5px + env(safe-area-inset-top,0px))}
+#txHistoryPage.vx-hist{padding-top:0;--vx-top:max(20px,env(safe-area-inset-top,0px))}
+:is(#notificationPage,#txHistoryPage).vx-hist .wd-notification-header{position:sticky;top:0;z-index:30;isolation:isolate;margin-top:0;padding-top:calc(var(--vx-top) + 4px);min-height:calc(40px + var(--vx-top))}
+:is(#notificationPage,#txHistoryPage).vx-hist .wd-notification-header::before{content:"";position:absolute;inset:0 -8px;background:#fff;z-index:-1;pointer-events:none}
+:is(#notificationPage,#txHistoryPage).vx-hist .wd-notification-header::after{content:"";position:absolute;left:-8px;right:-8px;top:100%;height:30px;z-index:-1;pointer-events:none;background:linear-gradient(to bottom,#fff 0,rgba(255,255,255,.9) 20%,rgba(255,255,255,.6) 50%,rgba(255,255,255,.22) 78%,rgba(255,255,255,0) 100%)}
+
+/* the coin filter chips are part of the fixed top area: they stay under the header and never scroll with the list */
+:is(#notificationPage,#txHistoryPage).vx-hist:has(.vx-chips:not([hidden]):not(:empty)) .wd-notification-header{padding-bottom:12px;min-height:calc(52px + var(--vx-top))}
+:is(#notificationPage,#txHistoryPage).vx-hist:has(.vx-chips:not([hidden]):not(:empty)) .wd-notification-header::before{bottom:-38px}
+:is(#notificationPage,#txHistoryPage).vx-hist:has(.vx-chips:not([hidden]):not(:empty)) .wd-notification-header::after{top:calc(100% + 38px)}
+:is(#notificationPage,#txHistoryPage).vx-hist:has(.vx-chips:not([hidden]):not(:empty)) .vx-chips{position:sticky;top:calc(52px + var(--vx-top));z-index:31;margin-top:0}
+
+/* Assets: five at a time, a thin progress line above the list, "View others" in the header */
+#assetsSection{position:relative;padding-bottom:20px}
+.wd-asset-track{position:absolute;left:16px;right:16px;bottom:8px;height:3px;border-radius:3px;background:transparent!important;border:0;box-shadow:none;overflow:hidden;margin:0;z-index:1}
+.wd-asset-track i{display:block;height:100%;width:0;border-radius:3px;background:var(--brand-grad,var(--brand,#2450ff));transition:width .35s ease}
+
+/* Notification view header: same position as the notification list header (same top offset, same side inset) */
+#notificationDetailPage{padding-top:0}
+#notificationDetailPage .wd-notification-header{margin:0 auto;padding-top:calc(5px + env(safe-area-inset-top,0px) + 4px);padding-left:6px;padding-right:6px;min-height:calc(40px + 5px + env(safe-area-inset-top,0px))}

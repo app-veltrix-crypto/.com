@@ -114,6 +114,18 @@ host.innerHTML=`
  </div>
  </div>
 </section>
+<section class="vm-page vm-over" id="vmPoll" hidden aria-label="Create poll">
+ <header class="vm-top"><button type="button" class="vm-ic" id="vmPollBack" aria-label="Back to conversation">${I.back}</button><h1>Create poll</h1></header>
+ <div class="vm-pl-body" id="vmPollBody">
+  <div class="vm-pl-lab">Question</div>
+  <div class="vm-pl-box"><input type="text" id="vmPollQ" maxlength="255" placeholder="Ask question" autocomplete="off" aria-label="Poll question"></div>
+  <div class="vm-pl-cnt" id="vmPollQC">0/255</div>
+  <div class="vm-pl-lab">Options</div>
+  <div id="vmPollOpts"></div>
+  <button type="button" class="vm-pl-multi" id="vmPollMulti" role="switch" aria-checked="true"><span>Allow multiple answers</span><i class="vm-pl-sw"></i></button>
+ </div>
+ <button type="button" class="vm-fab vm-pl-send" id="vmPollSend" aria-label="Send poll" disabled>${I.send}</button>
+</section>
 <div class="vm-viewer vv" id="vmViewer" hidden><button type="button" class="vm-ic" id="vmViewerX" aria-label="Close">${I.x}</button>
 <div class="vv-stage" id="vvStage"><img alt="" hidden><video playsinline hidden></video></div>
 <div class="vv-info"><div class="vv-author"><span class="vv-av" id="vvAv"></span><span class="vv-name" id="vvName"></span></div><p class="vv-cap" id="vvCap" hidden></p></div>
@@ -121,7 +133,12 @@ host.innerHTML=`
 <div class="vv-ctl"><button type="button" id="vvPlay" aria-label="Pause"></button><span class="vv-time" id="vvTime">-0:00</span><span class="vv-sp"></span><button type="button" class="vv-speed" id="vvSpeed" aria-label="Playback speed">1x</button><button type="button" id="vvMute" aria-label="Sound"></button><button type="button" id="vvFs" aria-label="Full screen"></button></div></div></div>
 <div class="vm-viewer vm-preview" id="vmPreview" hidden><button type="button" class="vm-ic" id="vmPreviewX" aria-label="Close">${I.x}</button><button type="button" class="vm-once vm-once-big" id="vmPreviewOnce" aria-label="One-time view">${I.once}</button><div class="vp-stage" id="vpStage"><img alt="" hidden><video playsinline preload="auto" hidden></video><span class="vp-spin" id="vpSpin" hidden></span><p class="vp-fail" id="vpFail" hidden>This video can't be previewed here. You can still send it.</p></div><div class="vv-bar vp-bar" id="vpBar" hidden><div class="vv-prog" id="vpProg" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="vpFill"></i></div><div class="vv-ctl"><button type="button" id="vpPlay" aria-label="Pause"></button><span class="vv-time" id="vpTime">-0:00</span><span class="vv-sp"></span><button type="button" id="vpMute" aria-label="Sound"></button></div></div><div class="vm-prevhint" id="vmPreviewHint"></div></div>
 <div class="vm-dialog-backdrop" id="vmDialog" hidden><section class="vm-dialog" role="dialog" aria-modal="true" aria-labelledby="vmDialogTitle"><h2 id="vmDialogTitle">Message options</h2><p id="vmDialogText">Choose an action.</p><div class="vm-dialog-actions" id="vmDialogActions"></div><button type="button" class="vm-dialog-cancel" id="vmDialogCancel">Cancel</button></section></div>
-<div class="vm-upload-menu" id="vmUploadMenu" hidden><button type="button" data-upload="image"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 4.6-4.4a1.6 1.6 0 0 1 2.2 0L14 15.5l1.8-1.7a1.6 1.6 0 0 1 2.2 0L20.5 16"/></svg></span><span class="vm-um-t">Choose image</span></button><button type="button" data-upload="video"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 10.5 4.2-2.4a.6.6 0 0 1 .8.5v6.8a.6.6 0 0 1-.8.5L16 13.5"/></svg></span><span class="vm-um-t">Choose video</span></button><button type="button" data-upload="file"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3.5H8a2.5 2.5 0 0 0-2.5 2.5v12A2.5 2.5 0 0 0 8 20.5h8a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 3.5V8h4.5M9 13h6M9 16.5h4"/></svg></span><span class="vm-um-t">Browse files</span></button><button type="button" data-upload="cancel"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m9 9 6 6M15 9l-6 6"/></svg></span><span class="vm-um-t">Cancel</span></button></div>
+<div class="vm-upload-menu vm-sheetwrap" id="vmUploadMenu" hidden><div class="vm-sheet" id="vmSheet" role="dialog" aria-label="Attach"><div class="vm-sheet-grab"></div><div class="vm-sheet-grid">
+<button type="button" data-upload="image"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="3"/><circle cx="9" cy="10" r="1.6"/><path d="m4 17 4.6-4.4a1.6 1.6 0 0 1 2.2 0L14 15.5l1.8-1.7a1.6 1.6 0 0 1 2.2 0L20.5 16"/></svg></span><span class="vm-um-t">Gallery</span></button>
+<button type="button" data-upload="video"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 10.5 4.2-2.4a.6.6 0 0 1 .8.5v6.8a.6.6 0 0 1-.8.5L16 13.5"/></svg></span><span class="vm-um-t">Video</span></button>
+<button type="button" data-upload="file"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3.5H8a2.5 2.5 0 0 0-2.5 2.5v12A2.5 2.5 0 0 0 8 20.5h8a2.5 2.5 0 0 0 2.5-2.5V8z"/><path d="M14 3.5V8h4.5M9 13h6M9 16.5h4"/></svg></span><span class="vm-um-t">Document</span></button>
+<button type="button" data-upload="poll"><span class="vm-um-ic"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h9M5 12h14M5 17h6"/></svg></span><span class="vm-um-t">Poll</span></button>
+</div></div></div>
 <div class="vm-toast" id="vmToast" role="status" aria-live="polite"></div>
 <input type="file" id="vmFile" accept="image/*,video/*" multiple hidden>
 <input type="file" id="vmImageFile" accept="image/*" multiple hidden>
@@ -149,9 +166,9 @@ function renderConvs(){
   :`<div class="vm-empty"><div class="vm-eic">${I.chat}</div><h2>${q?"No matches":"No conversations yet"}</h2><p>${q?"Try a different name.":"When a user starts a conversation from the app, it will show up here so you can reply."}</p></div>`;
 }
 el("vmConvs").addEventListener("click",e=>{const r=e.target.closest("[data-uid]");if(r&&!r.dataset.longPressed)openChat(r.dataset.uid);delete r?.dataset.longPressed});
-// Long-press (or right-click) a conversation row to delete the entire conversation.
+// Press and hold (or right-click) a conversation row to select it; the delete button then appears at the bottom-left of the screen.
 function bindLongPress(container, selector, action){let timer, fired=false;container.addEventListener("pointerdown",e=>{const row=e.target.closest(selector);if(!row)return;fired=false;timer=setTimeout(()=>{fired=true;row.dataset.longPressed="1";action(row)},600)});["pointerup","pointerleave","pointercancel"].forEach(n=>container.addEventListener(n,()=>clearTimeout(timer)));container.addEventListener("contextmenu",e=>{const row=e.target.closest(selector);if(row){e.preventDefault();action(row)}})}
-bindLongPress(el("vmConvs"),"[data-uid]",row=>{const uid=row.dataset.uid,u=userOf(uid);if(u)showDialog("Delete conversation?",`Delete the complete conversation with ${u.name}? It is removed for the user too. This cannot be undone.`,[{label:"Delete conversation",danger:true,run:()=>{mutate(()=>dropThread(uid));renderConvs();toast("Conversation deleted")}}])});
+veltrixSelect.attach({container:el("vmConvs"),rowSel:"[data-uid]",idOf:r=>r.dataset.uid,label:"Delete",onDelete:(ids,finish)=>{const us=ids.map(id=>userOf(id)).filter(Boolean);if(!us.length)return finish();const one=us.length===1;showDialog(one?"Delete conversation?":`Delete ${us.length} conversations?`,one?`Delete the complete conversation with ${us[0].name}? It is removed for the user too. This cannot be undone.`:`Delete the ${us.length} selected conversations? They are removed for the users too. This cannot be undone.`,[{label:one?"Delete conversation":"Delete conversations",danger:true,run:()=>{mutate(()=>{us.forEach(u=>dropThread(u.id))});renderConvs();finish();toast(one?"Conversation deleted":"Conversations deleted")}}])}});
 el("vmSearch").addEventListener("input",renderConvs);
 
 /* ---------- new message: recent users of the mobile app ----------
@@ -184,12 +201,17 @@ function openChat(uid,user){
  clearStage();text.value="";autosize();setMode();markRead(uid);renderMsgs(true);C.hidden=false;
  try{window.vxChatMenu&&window.vxChatMenu.onChat({admin:true,accountId:u.accountId,contactId:u.contactId,persona:u.contactName||"",support:u.contactId==="veltrix-support"})}catch(e){}
 }
-function closeChat(){try{window.vxChatMenu&&window.vxChatMenu.onChat(null)}catch(e){}clearStage();closePreview();closeViewer();if(recorder)cancelRec();stopPlayback();C.hidden=true;activeId=null;activeUser=null;divN=0;renderConvs()}
+function closeChat(){try{PO.hidden=true}catch(e){}try{window.vxChatMenu&&window.vxChatMenu.onChat(null)}catch(e){}clearStage();closePreview();closeViewer();if(recorder)cancelRec();stopPlayback();C.hidden=true;activeId=null;activeUser=null;divN=0;renderConvs()}
 el("vmChatBack").addEventListener("click",closeChat);
 
 function bubble(m){
  const mine=m.from==="them",meta=`<span class="vm-meta">${fmtT(m.t)}${mine?tickHTML(m.t<=((store.convs[activeId]&&store.convs[activeId].rc&&store.convs[activeId].rc.userReadAt)||0)):""}</span>`,cls="vm-b "+(mine?"me":"them");
  const sz=m.size?fmtSize(m.size):"";
+ if(m.type==="poll"&&m.poll){
+  const pv=pollVotes(m),opts=m.poll.opts||[],adm=pv.them,usr=pv.me,cnt=o=>(adm.includes(o.id)?1:0)+(usr.includes(o.id)?1:0),voters=(adm.length?1:0)+(usr.length?1:0);
+  const rows=opts.map(o=>{const n=cnt(o),on=adm.includes(o.id),w=voters?Math.round(n/voters*100):0;
+   return `<button type="button" class="vm-po${on?" on":""}" data-pvote="${m.id}" data-opt="${esc(o.id)}" role="${m.poll.multi?"checkbox":"radio"}" aria-checked="${on}"><span class="vm-pk${m.poll.multi?" sq":""}"><svg viewBox="0 0 24 24"><path d="m6 12.5 4 4 8-9"/></svg></span><span class="vm-pt">${escE(o.t)}</span><span class="vm-pn">${n||""}</span><span class="vm-pbar"><i style="width:${w}%"></i></span></button>`}).join("");
+  return `<div class="${cls} vm-poll" data-mid="${m.id}"><div class="vm-pq">${escE(m.poll.q)}</div><div class="vm-ph">${m.poll.multi?"Select one or more":"Select one"}</div>${rows}${meta}</div>`}
  if((m.type==="image"||m.type==="video")&&m.once){
   const me=mine,label=(m.type==="image"?"Photo":"Video")+(m.opened?" · Opened":me?" · One-time view":" · Tap to view once");
   return `<div class="${cls}" data-mid="${m.id}"><button type="button" class="vm-oncecard${m.opened?" done":""}" ${!me&&!m.opened?`data-once-open="${m.id}"`:"disabled"}>${I.once}<span>${label}</span></button>${meta}</div>`}
@@ -252,8 +274,46 @@ function doSend(){if(editingId&&text.value.trim())sendText();else if(staged.leng
 sendBtn.addEventListener("click",()=>{if(recorder)stopRec(true);else if(staged.length||text.value.trim())doSend();else startRec()});
 
 /* photos & videos */
-el("vmAttach").addEventListener("click",()=>{el("vmUploadMenu").hidden=false});
-el("vmUploadMenu").addEventListener("click",e=>{const b=e.target.closest("[data-upload]");if(!b)return;el("vmUploadMenu").hidden=true;const map={image:"vmImageFile",video:"vmVideoFile",file:"vmAnyFile"};if(map[b.dataset.upload])el(map[b.dataset.upload]).click()});
+/* The paperclip: the keyboard is put away and a sheet slides up from the bottom with Gallery, Video and Document */
+const upMenu=el("vmUploadMenu");
+function closeSheet(){upMenu.hidden=true}
+el("vmAttach").addEventListener("click",()=>{try{text.blur()}catch(e){}upMenu.hidden=false});
+upMenu.addEventListener("click",e=>{if(e.target===upMenu){closeSheet();return}const b=e.target.closest("[data-upload]");if(!b)return;closeSheet();if(b.dataset.upload==="poll"){openPoll();return}const map={image:"vmImageFile",video:"vmVideoFile",file:"vmAnyFile"};if(map[b.dataset.upload])el(map[b.dataset.upload]).click()});
+/* pull the sheet down to close it */
+(function(){const sh=el("vmSheet");let y0=null;sh.addEventListener("touchstart",e=>{y0=e.touches[0].clientY},{passive:true});sh.addEventListener("touchmove",e=>{if(y0==null)return;const d=e.touches[0].clientY-y0;if(d>0)sh.style.transform="translateY("+d+"px)"},{passive:true});sh.addEventListener("touchend",e=>{if(y0==null)return;const d=(e.changedTouches[0].clientY-y0);y0=null;if(d>70)closeSheet();sh.style.transform=""},{passive:true})})();
+/* ---- polls (the admin sends as the contact: the stored message is from "them", so the admin's own votes live in votes.them and the user's in votes.me) ---- */
+const POLL_MAX=12;
+function pollVotes(m){const v=m.votes||{};return {me:Array.isArray(v.me)?v.me:[],them:Array.isArray(v.them)?v.them:[]}}
+const PO=el("vmPoll"),pq=el("vmPollQ"),pOpts=el("vmPollOpts"),pSend=el("vmPollSend"),pMulti=el("vmPollMulti");
+function pollOptInputs(){return [...pOpts.querySelectorAll("input")]}
+function addPollOpt(){const n=pollOptInputs().length;if(n>=POLL_MAX)return;const d=document.createElement("div");d.className="vm-pl-opt";d.innerHTML='<div class="vm-pl-box"><input type="text" maxlength="100" placeholder="+ Add" autocomplete="off" aria-label="Poll option"></div><div class="vm-pl-cnt">0/100</div>';pOpts.appendChild(d)}
+function pollRefresh(){
+ el("vmPollQC").textContent=pq.value.length+"/255";
+ const ins=pollOptInputs();ins.forEach(i=>{const c=i.parentNode.nextElementSibling;if(c)c.textContent=i.value.length+"/100"});
+ if(ins.length&&ins[ins.length-1].value.trim()&&ins.length<POLL_MAX)addPollOpt();
+ const filled=pollOptInputs().filter(i=>i.value.trim()).length;
+ pSend.disabled=!(pq.value.trim()&&filled>=2)}
+function openPoll(){pq.value="";pOpts.innerHTML="";addPollOpt();addPollOpt();pMulti.setAttribute("aria-checked","true");el("vmPollBody").scrollTop=0;pollRefresh();PO.hidden=false}
+function closePoll(){try{document.activeElement&&document.activeElement.blur&&document.activeElement.blur()}catch(e){}PO.hidden=true}
+pq.addEventListener("input",pollRefresh);pOpts.addEventListener("input",pollRefresh);
+pMulti.addEventListener("click",()=>pMulti.setAttribute("aria-checked",pMulti.getAttribute("aria-checked")==="true"?"false":"true"));
+el("vmPollBack").addEventListener("click",closePoll);
+pSend.addEventListener("click",()=>{
+ const q=pq.value.trim(),vals=pollOptInputs().map(i=>i.value.trim()).filter(Boolean);
+ if(!q||vals.length<2)return;
+ const seen=new Set(),opts=[];vals.forEach(t=>{const k=t.toLowerCase();if(seen.has(k))return;seen.add(k);opts.push({id:"o"+(opts.length+1),t})});
+ if(opts.length<2)return toast("Add two different options");
+ closePoll();
+ addMsg({type:"poll",text:"📊 "+q,poll:{q,opts,multi:pMulti.getAttribute("aria-checked")==="true"},votes:{me:[],them:[]}})});
+function votePoll(id,opt){
+ const c0=activeId&&store.convs[activeId],m0=c0&&c0.msgs.find(x=>x.id===id);if(!m0||m0.type!=="poll"||!m0.poll||!(m0.poll.opts||[]).some(o=>o.id===opt))return;
+ mutate(()=>{const c=store.convs[activeId],m=c&&c.msgs.find(x=>x.id===id);if(!m)return;
+  const pv=pollVotes(m);let mine=pv.them.slice();
+  if(m.poll.multi)mine=mine.includes(opt)?mine.filter(x=>x!==opt):mine.concat(opt);else mine=mine.includes(opt)?[]:[opt];
+  m.votes={me:pv.me,them:mine}});
+ renderMsgs(false)}
+msgsEl.addEventListener("click",e=>{const b=e.target.closest("[data-pvote]");if(b)votePoll(b.dataset.pvote,b.dataset.opt)});
+
 /* ---- staging tray: picked files sit above the typing area until sent ---- */
 let staged=[],previewIdx=-1;
 const EXT_I=/\.(jpe?g|png|gif|webp|bmp|avif|svg|heic|heif)$/i,EXT_V=/\.(mp4|mov|m4v|webm|3gp|mkv|avi|ogv)$/i;
@@ -352,8 +412,8 @@ el("vmDialog").addEventListener("click",e=>{if(e.target===el("vmDialog"))el("vmD
 let editingId=null;
 function beginEdit(msg){if(msg.from!=="them"||msg.type!=="text")return toast("Only your own text messages can be edited");editingId=msg.id;el("vmEditingLabel").textContent="Editing message";el("vmEditingText").innerHTML=escE(msg.text);el("vmEditing").hidden=false;text.value=msg.text;autosize();setMode();text.focus()}
 el("vmEditCancel").addEventListener("click",()=>{editingId=null;el("vmEditing").hidden=true;text.value="";autosize();setMode()});
-// Long-press (or right-click) a message to open the styled action sheet.
-bindLongPress(msgsEl,".vm-b",row=>{const c=store.convs[activeId];if(!c)return;const msg=c.msgs.find(m=>m.id===row.dataset.mid);if(!msg)return;const actions=[];if(msg.from==="them"&&msg.type==="text")actions.push({label:"Edit message",run:()=>beginEdit(msg)});actions.push({label:"Delete message",danger:true,run:()=>{mutate(()=>{const x=store.convs[activeId];if(x){const i=x.msgs.findIndex(m=>m.id===msg.id);if(i>-1)x.msgs.splice(i,1)}});renderMsgs(false);renderConvs();toast("Message deleted")}});showDialog("Message options",msg.from==="them"?"Edit this message or remove it from the conversation.":"Delete this message from the conversation.",actions)});
+// Press and hold (or right-click) a message to select it; the delete button then appears at the bottom-left of the screen.
+const selMsgs=veltrixSelect.attach({container:msgsEl,rowSel:".vm-b",idOf:r=>r.dataset.mid,label:"Delete",onSelect:s=>{try{window.vxChatMenu&&window.vxChatMenu.setSelection(s)}catch(e){}},extra:id=>{const c=store.convs[activeId],m=c&&c.msgs.find(x=>x.id===id);return m&&m.from==="them"&&m.type==="text"?{label:"Edit message",run:()=>{selMsgs.clear();beginEdit(m)}}:null},onDelete:(ids,finish)=>{const set=new Set(ids),c=store.convs[activeId],n=c?c.msgs.filter(m=>set.has(m.id)).length:0;if(!n)return finish();const one=n===1;showDialog(one?"Delete message?":`Delete ${n} messages?`,one?"Delete this message from the conversation.":"Delete these messages from the conversation.",[{label:one?"Delete message":"Delete messages",danger:true,run:()=>{mutate(()=>{const x=store.convs[activeId];if(x)x.msgs=x.msgs.filter(m=>!set.has(m.id))});renderMsgs(false);renderConvs();finish();toast(one?"Message deleted":"Messages deleted")}}])}});
 el("vmViewerX").addEventListener("click",closeViewer);
 (function(){const v=el("vmViewer"),vd=v.querySelector(".vv-stage video"),prog=el("vvProg");
  const upd=()=>{const d=vd.duration,t=vd.currentTime||0;el("vvFill").style.width=(d>0&&isFinite(d)?Math.min(100,t/d*100):0)+"%";el("vvTime").textContent="-"+vvTime(isFinite(d)?d-t:0);prog.setAttribute("aria-valuenow",String(Math.round(d>0&&isFinite(d)?t/d*100:0)))};
@@ -425,7 +485,7 @@ msgsEl.addEventListener("click",async e=>{
 
 /* Escape closes the top-most messaging layer (the inbox itself is the home screen, so it stays) */
 document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;
- if(!el("vmPreview").hidden)closePreview();else if(!el("vmViewer").hidden)closeViewer();else if(!el("vmDialog").hidden)el("vmDialog").hidden=true;else if(!el("vmUploadMenu").hidden)el("vmUploadMenu").hidden=true;else if(!C.hidden)closeChat();else if(!P.hidden)P.hidden=true});
+ if(!el("vmPreview").hidden)closePreview();else if(!el("vmViewer").hidden)closeViewer();else if(!el("vmDialog").hidden)el("vmDialog").hidden=true;else if(!el("vmUploadMenu").hidden)el("vmUploadMenu").hidden=true;else if(!PO.hidden)closePoll();else if(!C.hidden)closeChat();else if(!P.hidden)P.hidden=true});
 
 /* ---------- live updates: a user's message written to the inbox (from another tab/page) appears immediately ---------- */
 function sig(uid){const c=store.convs[uid],ms=c&&c.msgs||[],l=ms[ms.length-1];return ms.length+":"+(l?l.id+(l.edited?"e":""):"")+":"+((c&&c.rc&&c.rc.userReadAt)||0)}

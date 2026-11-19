@@ -16,14 +16,15 @@ const POLL_MS=60000;
 
 /* ====================================================== helpers */
 const SV=b=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${b}</svg>`;
+const FV=b=>`<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">${b}</svg>`;
 const TOPIC_SVG={
   security:SV('<path d="M12 3 5 6v5.2c0 4.4 2.9 8 7 9.8 4.1-1.8 7-5.4 7-9.8V6l-7-3z"/><path d="m9 12 2.2 2.2L15.5 10"/>'),
   chat:SV('<path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-6.5L8 20.5V17H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M8 10h8M8 13h5"/>'),
   transaction:SV('<path d="M4 8h15M15.5 4.5 19 8l-3.5 3.5"/><path d="M20 16H5M8.5 12.5 5 16l3.5 3.5"/>'),
-  withdrawal:SV('<path d="M7 17 17 7"/><path d="M9 7h8v8"/>'),
+  withdrawal:FV('<path fill-rule="evenodd" d="M7.27 1.047a1 1 0 0 1 1.46 0l6.345 6.77c.6.638.146 1.683-.73 1.683H11.5v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1H1.654C.78 9.5.326 8.455.924 7.816zM14.346 8.5 8 1.731 1.654 8.5H4.5a1 1 0 0 1 1 1v1h5v-1a1 1 0 0 1 1-1zm-9.846 5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1zm6 0h-5v1h5z"/>'),
   deposit:SV('<path d="M17 7 7 17"/><path d="M15 17H7V9"/>'),
   price:SV('<path d="m3 17 6-6 4 4 8-8"/><path d="M15 7h6v6"/>'),
-  login:SV('<circle cx="8" cy="15" r="4"/><path d="m11 12 9-9"/><path d="m16 7 3 3"/><path d="m14 9 2 2"/>'),
+  login:FV('<path d="M3.5 11.5a3.5 3.5 0 1 1 3.163-5H14L15.5 8 14 9.5l-1-1-1 1-1-1-1 1-1-1-1 1H6.663a3.5 3.5 0 0 1-3.163 2M2.5 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>'),
   promo:SV('<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M5 12v8h14v-8M12 8v12"/><path d="M12 8C10 3.5 6 4.5 7 7c.4 1 3 1 5 1zM12 8c2-4.500 6-3.500 5-1-.4 1-3 1-5 1z"/>'),
   news:SV('<path d="M5 4h11a2 2 0 0 1 2 2v13H7a2 2 0 0 1-2-2V4z"/><path d="M18 9h1.5A1.500 1.500 0 0 1 21 10.500V17a2 2 0 0 1-2 2"/><path d="M8.500 8h6M8.500 12h6M8.500 16h3"/>'),
   _:SV('<path d="M6 16V11a6 6 0 1 1 12 0v5l1.500 2h-15L6 16z"/><path d="M10 21h4"/>')
@@ -125,34 +126,39 @@ function openNotif(id){
   openFeature("notificationDetailPage");
   if(!n.read){n.read=true;paintBadge();paintNotifs();db().notif.markRead(id).catch(()=>{})}
 }
+let lpFired=false;
 document.addEventListener("click",e=>{
   const ic=e.target.closest(".vx-info-close");if(ic){const c=ic.closest("[data-info-card]");if(c)c.hidden=true;return}
   const chip=e.target.closest("#notifChips [data-chip]");if(chip){nCoin=chip.dataset.chip;paintNotifs();centerChip(chip);return}
-  const row=e.target.closest("#notifList [data-nid]");if(row){openNotif(row.dataset.nid);return}
+  const row=e.target.closest("#notifList [data-nid]");if(row){if(lpFired){lpFired=false;return}openNotif(row.dataset.nid);return}
   if(e.target.closest("#notificationDetailBack")){closeFeature("notificationDetailPage",true);openNotifId=null;return}
   if(e.target.closest("#notifyButton")){loadNotifs();return}
   if(e.target.closest("#notificationFilterApply")){setTimeout(paintNotifs,0);return}
 });
-async function deleteNotif(id){
-  if(!id)return;
-  const ok=window.veltrixDialog?await veltrixDialog({title:"Delete this notification?",msg:"It will be removed from your notifications.",ok:"Delete",danger:true}):confirm("Delete this notification?");
+async function deleteNotifs(list,finish){
+  if(!list||!list.length)return;const one=list.length===1;
+  const ok=window.veltrixDialog?await veltrixDialog({title:one?"Delete this notification?":"Delete "+list.length+" notifications?",msg:one?"It will be removed from your notifications.":"They will be removed from your notifications.",ok:"Delete",danger:true}):confirm(one?"Delete this notification?":"Delete "+list.length+" notifications?");
   if(!ok)return;
-  try{await db().notif.remove(id);notifs=notifs.filter(n=>n.id!==id);if(openNotifId===id){openNotifId=null;closeFeature("notificationDetailPage",true)}paintBadge();paintNotifs();toast("Notification deleted")}
-  catch{toast("Couldn't delete. Please try again.")}
+  let failed=0;
+  for(const id of list){
+    try{await db().notif.remove(id);notifs=notifs.filter(n=>n.id!==id);if(openNotifId===id){openNotifId=null;closeFeature("notificationDetailPage",true)}}
+    catch{failed++}
+  }
+  finish();paintBadge();paintNotifs();
+  toast(failed?"Couldn't delete. Please try again.":one?"Notification deleted":"Notifications deleted");
 }
-/* press and hold a notification in the list to delete it (transactions can't be deleted) */
-let lpT=null,lpX=0,lpY=0,lpFired=false;
-const lpClear=()=>{clearTimeout(lpT);lpT=null};
-document.addEventListener("pointerdown",e=>{
-  const row=e.target.closest("#notifList [data-nid]");if(!row)return;
-  lpFired=false;lpX=e.clientX;lpY=e.clientY;lpClear();
-  lpT=setTimeout(()=>{lpT=null;lpFired=true;try{navigator.vibrate&&navigator.vibrate(15)}catch{}deleteNotif(row.dataset.nid)},550);
-},true);
-document.addEventListener("pointermove",e=>{if(lpT&&(Math.abs(e.clientX-lpX)>10||Math.abs(e.clientY-lpY)>10))lpClear()},true);
-["pointerup","pointercancel","scroll"].forEach(t=>document.addEventListener(t,lpClear,true));
-document.addEventListener("contextmenu",e=>{if(e.target.closest("#notifList [data-nid]")){e.preventDefault()}},true);
-/* the click that ends a long-press must not also open the notification */
-document.addEventListener("click",e=>{if(lpFired&&e.target.closest("#notifList [data-nid]")){e.stopImmediatePropagation();e.preventDefault();lpFired=false}},true);
+/* press and hold a notification: no selecting, the delete pop-up opens straight away for that one notification (a normal tap still opens it; transactions can't be deleted) */
+(function(){
+  const box=$("notifList");if(!box)return;let t=null,x0=0,y0=0;
+  const stop=()=>{clearTimeout(t);t=null};
+  const rowOf=e=>e.target.closest&&e.target.closest("[data-nid]");
+  const fire=r=>{lpFired=true;try{navigator.vibrate&&navigator.vibrate(15)}catch(e){}deleteNotifs([r.dataset.nid],function(){})};
+  box.addEventListener("pointerdown",e=>{if(e.pointerType==="mouse"&&e.button!==0)return;const r=rowOf(e);lpFired=false;stop();if(!r)return;x0=e.clientX;y0=e.clientY;t=setTimeout(()=>{t=null;fire(r)},500)},true);
+  box.addEventListener("pointermove",e=>{if(t&&(Math.abs(e.clientX-x0)>10||Math.abs(e.clientY-y0)>10))stop()},true);
+  ["pointerup","pointercancel","pointerleave"].forEach(n=>box.addEventListener(n,stop,true));
+  document.addEventListener("scroll",stop,true);
+  box.addEventListener("contextmenu",e=>{const r=rowOf(e);if(!r)return;e.preventDefault();stop();fire(r)},true);
+})();
 
 /* ====================================================== TRANSACTION HISTORY */
 let txRows=[],txAll=[],openTx=null,openRows=[];

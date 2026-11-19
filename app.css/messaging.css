@@ -406,3 +406,52 @@ html[data-theme="dark"] #vmPreview img,html[data-theme="dark"] #vmPreview video{
 /* Paperclip button: the pressed highlight is now a true circle (the button was 32px wide but 36px tall, so it showed as an oval) */
 #vmChat .vm-field .vm-ic{height:32px}
 @media(max-width:380px){#vmChat .vm-field .vm-ic{height:29px}}
+
+/* ===== Attach sheet (slides up from the bottom, replaces the centred pop-up) + polls ===== */
+.vm-upload-menu.vm-sheetwrap{inset:0;left:0;top:0;transform:none;width:auto;max-width:none;padding:0;background:rgba(0,0,0,.32);border:0;border-radius:0;box-shadow:none;display:flex;align-items:flex-end;justify-content:center;gap:0}
+.vm-upload-menu.vm-sheetwrap[hidden]{display:none!important}
+.vm-sheet{width:100%;max-width:480px;background:#fff;border-radius:22px 22px 0 0;padding:8px 14px calc(20px + env(safe-area-inset-bottom));box-shadow:0 -10px 40px rgba(0,0,0,.14);animation:vmSheetUp .26s cubic-bezier(.2,.8,.2,1) both}
+@keyframes vmSheetUp{from{transform:translateY(100%)}to{transform:none}}
+.vm-sheet-grab{width:38px;height:4px;border-radius:2px;background:#d4d4d8;margin:2px auto 16px}
+.vm-sheet-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px 8px}
+.vm-sheetwrap .vm-sheet-grid button{flex-direction:column;justify-content:flex-start;gap:7px;padding:2px 0;text-align:center;border-radius:12px;font-size:11px;color:#555}
+.vm-sheetwrap .vm-sheet-grid button:active{background:transparent;opacity:.6}
+.vm-sheetwrap .vm-um-ic{flex:none;width:100%;max-width:74px;height:44px;border-radius:22px;border:1px solid #e4e4e7;background:transparent;color:#111}
+.vm-sheetwrap .vm-um-ic svg{width:21px;height:21px}
+.vm-sheetwrap .vm-um-t{flex:none;width:100%}
+html[data-theme="dark"] .vm-upload-menu.vm-sheetwrap{background:rgba(255,255,255,.32)}
+
+#vmPoll{background:#fff;color:#111}
+#vmPoll .vm-top h1{font-size:15px}
+.vm-pl-body{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:4px 16px 120px}
+.vm-pl-lab{font-size:11px;font-weight:600;color:#7b7d85;margin:16px 2px 8px}
+.vm-pl-box{display:flex;align-items:center;height:46px;padding:0 14px;border:1px solid #d9d9de;border-radius:13px;background:#fff}
+.vm-pl-box:focus-within{border-color:#111}
+.vm-pl-box input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:#111;font:inherit;font-size:12px;-webkit-appearance:none}
+.vm-pl-cnt{text-align:right;font-size:9px;color:#9a9ca4;margin:4px 8px 10px}
+.vm-pl-opt .vm-pl-cnt{margin-bottom:12px}
+.vm-pl-multi{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;margin-top:10px;padding:16px 2px 0;border:0;border-top:1px solid #eee;background:transparent;color:#111;font:inherit;font-size:12px;font-weight:600;text-align:left;cursor:none}
+.vm-pl-sw{position:relative;flex:0 0 46px;width:46px;height:26px;border-radius:13px;background:#d4d4d8;transition:background .15s}
+.vm-pl-sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .15s}
+.vm-pl-multi[aria-checked="true"] .vm-pl-sw{background:#111}
+.vm-pl-multi[aria-checked="true"] .vm-pl-sw::after{transform:translateX(20px)}
+.vm-pl-send svg{width:20px;height:20px;fill:currentColor;stroke:none}
+.vm-pl-send[disabled]{opacity:.3}
+
+.vm-b.vm-poll{min-width:210px;max-width:84%}
+.vm-pq{font-size:12.5px;font-weight:600;line-height:1.35;overflow-wrap:anywhere}
+.vm-ph{font-size:9.5px;margin:2px 0 8px;opacity:.65}
+.vm-po{position:relative;display:grid;grid-template-columns:20px 1fr auto;align-items:center;column-gap:9px;width:100%;padding:7px 0 9px;border:0;background:transparent;color:inherit;font:inherit;font-size:12px;text-align:left;cursor:none}
+.vm-pk{width:18px;height:18px;border-radius:50%;border:1.5px solid currentColor;opacity:.55;display:grid;place-items:center}
+.vm-pk.sq{border-radius:5px}
+.vm-pk svg{width:12px;height:12px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.vm-po.on .vm-pk{opacity:1;background:currentColor}
+.vm-po.on .vm-pk svg{opacity:1;stroke:#111}
+.vm-b.them .vm-po.on .vm-pk svg{stroke:#f1f1f1}
+.vm-pt{min-width:0;overflow-wrap:anywhere}
+.vm-pn{font-size:11px;opacity:.75;min-width:10px;text-align:right}
+.vm-pbar{grid-column:2 / 4;height:4px;margin-top:6px;border-radius:2px;background:rgba(127,127,127,.28);overflow:hidden}
+.vm-pbar i{display:block;height:100%;border-radius:2px;background:currentColor;opacity:.85;transition:width .25s}
+
+/* poll inputs: no extra inner outline/border when focused (the box itself already shows focus) */
+#vmPoll .vm-pl-box input,#vmPoll .vm-pl-box input:focus,#vmPoll .vm-pl-box input:focus-visible,#vmPoll .vm-pl-box input:active{outline:0!important;box-shadow:none!important;border:0!important;-webkit-appearance:none;appearance:none}
